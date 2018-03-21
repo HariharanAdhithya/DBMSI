@@ -1,6 +1,5 @@
 package columnar;
 
-import global.TID;
 import heap.Heapfile;
 import heap.Scan;
 import heap.Tuple;

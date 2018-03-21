@@ -5,6 +5,7 @@ import java.io.IOException;
 import global.AttrType;
 import global.Convert;
 import global.RID;
+import global.TID;
 import heap.HFBufMgrException;
 import heap.HFDiskMgrException;
 import heap.HFException;

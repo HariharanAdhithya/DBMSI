@@ -21,8 +21,7 @@ import diskmgr.*;
 public class BMPage extends Page 
   implements GlobalConst{
   
-  
-  //public static final int SIZE_OF_SLOT = 4;
+ //public static final int SIZE_OF_SLOT = 4;
   public static final int DPFIXED =  2 * 2  + 3 * 4;
   
   public static final int COUNTER = 0;

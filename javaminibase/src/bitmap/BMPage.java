@@ -296,4 +296,28 @@ public class BMPage extends Page
     {
       return data;
     }
+    public void writeBMpageArray(byte[] x)
+   {
+	  data=x;
+   }
+  public void setBit(int position, int bit) 
+	throws IOException 
+    {
+      int positionToUse = position / 8;
+      int setLocation = positionToUse % availableMap;
+      setCount((short) Math.max(setLocation + 1, this.getCount()));
+      positionToUse = position % 8;
+      if (bit == 1) 
+      {
+          short tempAns = (short) (1 << positionToUse);
+          data[setLocation + DPFIXED] = (byte) (data[setLocation + DPFIXED] | tempAns);
+      } 
+      else 
+      {
+          System.out.println(data[setLocation + DPFIXED]);
+          short tempAns = (short) (~(1 << positionToUse));
+          data[setLocation + DPFIXED] = (byte) (data[setLocation + DPFIXED] & tempAns);
+          System.out.println(data[setLocation + DPFIXED]);
+      }
+     }
 }

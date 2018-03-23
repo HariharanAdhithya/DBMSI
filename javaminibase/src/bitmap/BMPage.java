@@ -103,20 +103,12 @@ public class BMPage extends Page
    * @return  the amount of available space on the page
    * @exception  IOException I/O errors
    */  
-  public int getavailable_space()  
+  public int available_space()  
     throws IOException
     {
       freeSpace = Convert.getShortValue (FREE_SPACE, data);
       return (freeSpace);
     }
-  
-  public void setavailable_space(int val)  
-		    throws IOException
-		    {
-		      freeSpace = (short) val;
-			Convert.setShortValue (freeSpace,FREE_SPACE, data);
-		      
-		    }
   public short getCount() 
 			throws IOException
 		    {

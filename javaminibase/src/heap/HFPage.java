@@ -5,6 +5,9 @@ package heap;
 import java.io.*;
 import java.lang.*;
 
+import columnar.IntegerValue;
+import columnar.StringValue;
+import columnar.ValueClass;
 import global.*;
 import diskmgr.*;
 
@@ -299,7 +302,17 @@ public class HFPage extends Page
       Convert.setShortValue((short)length, position, data);
       Convert.setShortValue((short)offset, position+2, data);
     }
-  
+  public void setSlotvalue(int slotno, ValueClass value, int offset)
+		    throws IOException
+		    {
+		      int position = DPFIXED + slotno * SIZE_OF_SLOT;
+		      if(value instanceof IntegerValue)
+		    	  { Convert.setIntValue(((IntegerValue)value).getValue().intValue(), position, data); }
+		      else if(value instanceof StringValue)
+		      { Convert.setStrValue(((StringValue)value).getValue(), position, data);	}
+		      
+		      Convert.setShortValue((short)offset, position+2, data);
+		    }
   /**
    * @param	slotno	slot number
    * @exception IOException I/O errors
@@ -326,6 +339,18 @@ public class HFPage extends Page
       return val;
     }
   
+  public int get_intvalue(int slotno) 
+  throws IOException{
+	  int position = DPFIXED + slotno * SIZE_OF_SLOT;
+      int val= Convert.getIntValue(position, data);
+      return val;
+  }
+  public String get_strvalue(int slotno,int length) 
+		  throws IOException{
+			  int position = DPFIXED + slotno * SIZE_OF_SLOT;
+		      String val= Convert.getStrValue(position, data, length);
+		      return val;
+		  }
   
   /**
    * inserts a new record onto the page, returns RID of this record 

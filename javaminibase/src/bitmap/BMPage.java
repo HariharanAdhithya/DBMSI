@@ -94,7 +94,7 @@ public class BMPage extends HFPage
    * open a B,Page and make this BMpage point to the given page
    * @param  page  the given page in Page type
    */
-  
+  public BMPage(PageId pid)  {    }  
   public BMPage(Page page)
     {
       data = page.getpage();

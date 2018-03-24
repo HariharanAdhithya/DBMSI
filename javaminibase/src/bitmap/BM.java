@@ -38,6 +38,70 @@ import heap.*;
  *
  */
 public class BM  implements GlobalConst{
+  //Default Constructor
+	public BM() {
+		
+		
+	}
+	
+	/** For debug. Print Bitmap structure out
+	   *@param header  the head page of the Bitmapfile
+	   *@exception IOException error from the lower layer
+	   *@exception ConstructPageException  error from BT page constructor
+	   *@exception IteratorException  error from iterator
+	   *@exception HashEntryNotFoundException  error from lower layer
+	   *@exception InvalidFrameNumberException  error from lower layer
+	   *@exception PageUnpinnedException  error from lower layer
+	   *@exception ReplacerException  error from lower layer
+	   */
+	  public static void printBitMap(BitMapHeaderPage header) 
+	    throws IOException, 
+		   ConstructPageException, 
+		   IteratorException,
+		   HashEntryNotFoundException,
+		   InvalidFrameNumberException,
+		   PageUnpinnedException,
+		   ReplacerException 
+	    {
+	      if(header.get_rootId().pid == INVALID_PAGE) {
+		System.out.println("The BitMap is Empty!!!");
+		return;
+	      }
+	      
+	      System.out.println("");
+	      System.out.println("");
+	      System.out.println("");
+	      System.out.println("---------------BitMap---------------");
+	      
+	      
+	      System.out.println(1+ "     "+header.get_rootId());
+	      
+	      _printTree(header.get_rootId());
+	      
+	      System.out.println("--------------- End ---------------");
+	      System.out.println("");
+	      System.out.println("");
+	    }
+
+	  private static void _printTree(PageId currentPageId) 
+		throws IOException, 
+	  {
+
+			BMPage page = new BMPage(currentPageId);
+			PageId pageid = page.getCurPage();
+			page.openBMpage(page);
+			byte [] data;
+		    data = page.getBMpageArray();
+		    System.out.println(data);
+		    
+		    PageId apage = page.getNextPage();
+		    if(apage.pid != INVALID_PAGE) {
+		    _printTree(apage);
+		    
+		    }
+		    
+	  
+	  }
 
   } // end of BM
 

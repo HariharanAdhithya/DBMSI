@@ -10,6 +10,7 @@ import columnar.StringValue;
 import columnar.ValueClass;
 import global.*;
 import diskmgr.*;
+import columnar.*;
 
 
 
@@ -252,6 +253,23 @@ public class HFPage extends Page
     {
       curPage.pid = pageNo.pid;
       Convert.setIntValue (curPage.pid, CUR_PAGE, data);
+    }
+  public void setCurPage_forGivenPosition(int Position, int columno, ColumnarFile columnfile)
+    throws IOException
+    {
+	  Scan scancol=columnfile.openColumnScan(columno); 
+	  RID rid = new RID();
+	  Tuple tupscan= new Tuple();
+	  int count= 0;
+	  while((tupscan=scancol.getNext(rid))!=null)
+	  {
+		  System.out.println("Searching...");
+		  if(count<Position)
+			  count++;
+		  else
+			  break;
+	  } 
+	  setCurPage(rid.pageNo);
     }
   
   /**

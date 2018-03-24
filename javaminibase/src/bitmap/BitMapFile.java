@@ -241,23 +241,25 @@ public class BitMapFile implements GlobalConst {
 
 		if (headerPage.get_rootId().pid == INVALID_PAGE) {
 			BMPage page = new BMPage();
-			page.setABit(position,1);
+			page.setBit(position,1);
 			return true;
 
 		}
 
 		if(headerPage.get_rootId().pid != INVALID_PAGE) {
-			BMPage page = new BMPage();
+			PageId p = headerPage.get_rootId(); 
+			//apage = headerPage.set_rootId(pid);
+			BMPage page = new BMPage(p);
 			apage = page.getCurPage();
 			page.openBMpage(page);
 			byte [] data;
-			if(page.getavailable_space() != 0) {
+			if(page.available_space() != 0) {
 				data = page.getBMpageArray();
 				int count = page.getCount();
 				if(position > count+1)
 					return false;
 				else {
-					page.setABit(position, 1);
+					page.setBit(position, 1);
 					return true;
 				}
 			}
@@ -269,20 +271,21 @@ public class BitMapFile implements GlobalConst {
 				page1.setPrevPage(apage);
 				page1.openBMpage(page1);
 				byte [] data2;
-				if(page1.getavailable_space() != 0) {
+				if(page1.available_space() != 0) {
 					data2 = page1.getBMpageArray();
 					int count2 = page1.getCount();
 					if(position > count2+1)
 						return false;
 					else {
-						page.setABit(position, 1);
+						page.setBit(position, 1);
 						return true;
 					}
 
 				}
 
 			}
-		}		 
+		}
+		return true;		 
 
 	}
 
@@ -292,7 +295,7 @@ public class BitMapFile implements GlobalConst {
 		PageId apage = new PageId();
 		if (headerPage.get_rootId().pid == INVALID_PAGE) {
 			BMPage page = new BMPage();
-			if(page.getavailable_space() == NULL) 
+			if(page.available_space() == 0) 
 			{
 				page.setBit(position,0);
 				return true;
@@ -312,6 +315,7 @@ public class BitMapFile implements GlobalConst {
 				page.setBit(position, 0);
 			return true;
 		}
+		return true;
 
 
 	}

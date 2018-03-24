@@ -19,7 +19,7 @@ import heap.HFPage;
  * deletions are performed. 
  */
 
-public class BMPage extends Page 
+public class BMPage extends HFPage 
   implements GlobalConst{
   
  //public static final int SIZE_OF_SLOT = 4;

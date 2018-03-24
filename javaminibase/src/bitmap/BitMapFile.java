@@ -2,7 +2,6 @@ package BitMap;
 
 
 import java.io.*;
-
 import btree.*;
 import global.*;
 import diskmgr.*;
@@ -242,6 +241,7 @@ public class BitMapFile implements GlobalConst {
 
 		if (headerPage.get_rootId().pid == INVALID_PAGE) {
 			BMPage page = new BMPage();
+			page.getNextPage().pid = INVALID_PAGE ;
 			page.setBit(position,1);
 			return true;
 
@@ -252,6 +252,7 @@ public class BitMapFile implements GlobalConst {
 			//apage = headerPage.set_rootId(pid);
 			BMPage page = new BMPage(p);
 			apage = page.getCurPage();
+			page.getNextPage().pid = INVALID_PAGE ;
 			page.openBMpage(page);
 			byte [] data;
 			if(page.available_space() != 0) {
@@ -296,6 +297,7 @@ public class BitMapFile implements GlobalConst {
 		PageId apage = new PageId();
 		if (headerPage.get_rootId().pid == INVALID_PAGE) {
 			BMPage page = new BMPage();
+			page.getNextPage().pid = INVALID_PAGE ;
 			if(page.available_space() == 0) 
 			{
 				page.setBit(position,0);
@@ -306,6 +308,7 @@ public class BitMapFile implements GlobalConst {
 
 			BMPage page = new BMPage();
 			apage = page.getCurPage();
+			page.getNextPage().pid = INVALID_PAGE ;
 			page.openBMpage(page);
 			byte [] data;
 			data = page.getBMpageArray();

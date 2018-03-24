@@ -7,6 +7,7 @@ import java.lang.*;
 
 import global.*;
 import diskmgr.*;
+import heap.HFPage;
 
  /**
   * Define constant values for INVALID_SLOT and EMPTY_SLOT

@@ -2,6 +2,7 @@ package BitMap;
 
 
 import java.io.*;
+
 import btree.*;
 import global.*;
 import diskmgr.*;
@@ -34,30 +35,30 @@ public class BitMapFile implements GlobalConst {
 		trace=null;
 	}
 
-	private BMHeaderPage headerPage;
+	private BitMapHeaderPage headerPage;
 	private  PageId  headerPageId;
 	private String  dbname;  
 
-	public BMHeaderPage getHeaderPage() {
+	public BitMapHeaderPage getHeaderPage() {
 		return headerPage;
 	}
 
-	private PageId get_file_entry(String filename)         
+	private PageId get_file_entry(String filename, ColumnarFile columnfile)         
 			throws GetFileEntryException
 	{
 		try {
-			return SystemDefs.JavabaseDB.get_file_entry(filename);
+			return SystemDefs.JavabaseDB.get_file_entry(filename, columnfile);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 			throw new GetFileEntryException(e,"");
 		}
 	}
-	private void add_file_entry(String fileName, ColumnarFile columnfile, PageId pageno) 
+	private void add_file_entry(String fileName, ColumnarFile columnfile) 
 			throws AddFileEntryException
 	{
 		try {
-			SystemDefs.JavabaseDB.add_file_entry(fileName, columnfile, pageno)//filename and its PGID is added to DB.
+			SystemDefs.JavabaseDB.add_file_entry(fileName, columnfile)//filename and its PGID is added to DB.
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -129,14 +130,14 @@ public class BitMapFile implements GlobalConst {
 		}  
 	}
 	//Constructor when file already exist;
-	public BitMapFile (String filename)
+	public BitMapFile (String filename, ColumnarFile columnfile)
 			throws GetFileEntryException,
 			PinPageException,
 			ConstructPageException
 	{
-		headerPageId=get_file_entry(filename);
+		headerPageId=get_file_entry(filename, columnfile);
 
-		headerPage=new BMHeaderPage(headerPageId);
+		headerPage=new BitMapHeaderPage(headerPageId);
 		dbname = new String(filename);
 
 	}
@@ -148,13 +149,13 @@ public class BitMapFile implements GlobalConst {
 			IOException, 
 			AddFileEntryException {
 
-		headerPageId=get_file_entry(filename);
+		headerPageId=get_file_entry(filename, columnfile);
 
 		if( headerPageId==null) //file not exist
 		{
-			headerPage= new  BMHeaderPage(); 
+			headerPage= new  BitMapHeaderPage(); 
 			headerPageId= headerPage.getPageId();
-			add_file_entry(filename,columnfile, headerPageId);
+			add_file_entry(filename,columnfile);
 			headerPage.set_magic0(MAGIC0);
 			headerPage.set_rootId(new PageId(INVALID_PAGE));
 			headerPage.set_ColNo(columno);
@@ -162,7 +163,7 @@ public class BitMapFile implements GlobalConst {
 			headerPage.setType(NodeType.BTHEAD);
 		}
 		else {
-			headerPage = new BMHeaderPage(headerPageId);  
+			headerPage = new BitMapHeaderPage(headerPageId);  
 		}
 
 		dbname=new String(filename);

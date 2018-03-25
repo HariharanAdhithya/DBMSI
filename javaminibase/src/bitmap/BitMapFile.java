@@ -324,5 +324,25 @@ public class BitMapFile implements GlobalConst {
 
 
 	}
+	
+	public void destroyFile()
+			throws IOException, 
+			   IteratorException, 
+			   UnpinPageException,
+			   FreePageException,   
+			   DeleteFileEntryException, 
+			   ConstructPageException,
+			   PinPageException 
+			   {
+					if( headerPage != null) {
+						PageId pgID = headerPage.get_rootId();
+						BMPage page = new BMPage (pgID);
+						page.dumpPage();
+						unpinPage(headerPageId);
+						freePage(headerPageId);
+						delete_file_entry(dbname);
+						headerPage = null;
+					}
+			   }
 
 }

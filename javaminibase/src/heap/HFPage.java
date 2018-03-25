@@ -254,7 +254,7 @@ public class HFPage extends Page
       curPage.pid = pageNo.pid;
       Convert.setIntValue (curPage.pid, CUR_PAGE, data);
     }
-  public void setCurPage_forGivenPosition(int Position, int columno, ColumnarFile columnfile)
+  public void setCurPage_forGivenPosition(int Position, int columno, Columnarfile columnfile)
     throws IOException, InvalidTupleSizeException
     {
 	  Scan scancol=columnfile.openColumnScan(columno); 

@@ -1,4 +1,4 @@
-package bitmap;
+package BitMap;
 
 
 import java.io.*;
@@ -7,6 +7,7 @@ import global.*;
 import diskmgr.*;
 import bufmgr.*;
 import columnar.*;
+import value.*;
 import heap.*;
 
 public class BitMapFile implements GlobalConst {
@@ -41,7 +42,7 @@ public class BitMapFile implements GlobalConst {
 		return headerPage;
 	}
 
-	private PageId get_file_entry(String filename, Columnarfile columnfile)         
+	private PageId get_file_entry(String filename, ColumnarFile columnfile)         
 			throws GetFileEntryException
 	{
 		try {
@@ -52,7 +53,7 @@ public class BitMapFile implements GlobalConst {
 			throw new GetFileEntryException(e,"");
 		}
 	}
-	private void add_file_entry(String fileName, Columnarfile columnfile) 
+	private void add_file_entry(String fileName, ColumnarFile columnfile) 
 			throws AddFileEntryException
 	{
 		try {
@@ -128,7 +129,7 @@ public class BitMapFile implements GlobalConst {
 		}  
 	}
 	//Constructor when file already exist;
-	public BitMapFile (String filename, Columnarfile columnfile)
+	public BitMapFile (String filename, ColumnarFile columnfile)
 			throws GetFileEntryException,
 			PinPageException,
 			ConstructPageException
@@ -141,11 +142,11 @@ public class BitMapFile implements GlobalConst {
 	}
 
 	//Constructor to create a new file, if it doesnt exist; 
-	public BitMapFile( String filename, Columnarfile  columnfile, int columno, ValueClass value)
+	public BitMapFile( String filename, ColumnarFile  columnfile, int columno, ValueClass value)
 			throws GetFileEntryException, 
 			ConstructPageException,
 			IOException, 
-			AddFileEntryException, InvalidTupleSizeException, FieldNumberOutOfBoundException {
+			AddFileEntryException {
 
 		headerPageId=get_file_entry(filename, columnfile);
 
@@ -157,7 +158,7 @@ public class BitMapFile implements GlobalConst {
 			headerPage.set_magic0(MAGIC0);
 			headerPage.set_rootId(new PageId(INVALID_PAGE));
 			headerPage.set_ColNo(columno);
-			headerPage.set_value(value);
+			headerPage.setValue(value);
 			headerPage.setType(NodeType.BTHEAD);
 		}
 		else {
@@ -178,7 +179,7 @@ public class BitMapFile implements GlobalConst {
 
 	}
 
-	public void accessStr(Columnarfile columnfile, int columno, String Value) throws InvalidTupleSizeException, IOException, FieldNumberOutOfBoundException {
+	public void accessStr(ColumnarFile columnfile, int columno, String Value) throws InvalidTupleSizeException, IOException, FieldNumberOutOfBoundException {
 
 		Tuple t = new Tuple();
 		int position = 0;
@@ -199,7 +200,7 @@ public class BitMapFile implements GlobalConst {
 
 	}
 	
-	public void accessInt(Columnarfile columnfile, int columno, int Value) throws InvalidTupleSizeException, IOException, FieldNumberOutOfBoundException {
+	public void accessInt(ColumnarFile columnfile, int columno, int Value) throws InvalidTupleSizeException, IOException, FieldNumberOutOfBoundException {
 
 		Tuple t = new Tuple();
 		int position = 0;
@@ -251,7 +252,7 @@ public class BitMapFile implements GlobalConst {
 			//apage = headerPage.set_rootId(pid);
 			BMPage page = new BMPage(p);
 			apage = page.getCurPage();
-			page.getNextPage().pid = INVALID_PAGE ;
+			page.setNextPage(new PageId(INVALID_PAGE));
 			page.openBMpage(page);
 			byte [] data;
 			if(page.available_space() != 0) {
@@ -271,6 +272,7 @@ public class BitMapFile implements GlobalConst {
 				page1.setCurPage(apage1);
 				page1.setPrevPage(apage);
 				page1.openBMpage(page1);
+				page1.setNextPage(new PageId(INVALID_PAGE));
 				byte [] data2;
 				if(page1.available_space() != 0) {
 					data2 = page1.getBMpageArray();
@@ -296,7 +298,7 @@ public class BitMapFile implements GlobalConst {
 		PageId apage = new PageId();
 		if (headerPage.get_rootId().pid == INVALID_PAGE) {
 			BMPage page = new BMPage();
-			page.getNextPage().pid = INVALID_PAGE ;
+			page.setNextPage(new PageId(INVALID_PAGE));
 			if(page.available_space() == 0) 
 			{
 				page.setBit(position,0);
@@ -307,7 +309,7 @@ public class BitMapFile implements GlobalConst {
 
 			BMPage page = new BMPage();
 			apage = page.getCurPage();
-			page.getNextPage().pid = INVALID_PAGE ;
+			page.setNextPage(new PageId(INVALID_PAGE));
 			page.openBMpage(page);
 			byte [] data;
 			data = page.getBMpageArray();

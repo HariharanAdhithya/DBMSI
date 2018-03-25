@@ -23,15 +23,15 @@ public class BMPage extends HFPage
   implements GlobalConst{
   
  //public static final int SIZE_OF_SLOT = 4;
-  public static final int DPFIXED =  2 * 2  + 3 * 4;
+  public static final int DPFIXED =  4 * 2  + 3 * 4;
   
   public static final int COUNTER = 0;
   //public static final int USED_PTR = 2;
-  public static final int FREE_SPACE = 2;
+  public static final int FREE_SPACE = 4;
   //public static final int TYPE = 6;
-  public static final int PREV_PAGE = 4;
-  public static final int NEXT_PAGE = 8;
-  public static final int CUR_PAGE = 12;
+  public static final int PREV_PAGE = 8;
+  public static final int NEXT_PAGE = 12;
+  public static final int CUR_PAGE = 16;
   
   public static final int availableMap=(MINIBASE_PAGESIZE-DPFIXED);
   

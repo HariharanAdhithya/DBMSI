@@ -135,7 +135,7 @@ implements GlobalConst{
 	public short getCount() 
 			throws IOException
 	{
-		//count = Convert.getShortValue (COUNTER, data);
+		count = Convert.getShortValue (COUNTER, data);
 		return (count);
 	}
 	public void setCount(short counter) 
@@ -229,10 +229,11 @@ implements GlobalConst{
 	 * @param  apage   a page in buffer pool
 	 */
 
-	public void openBMpage(PageId apage)
+	public void openBMpage(Page page)
+	
 	{
-		BMPage pg = new BMPage(apage);
-		data = pg.getpage();
+		//BMPage page = new BMPage(apage);		
+		data = page.getpage();
 	}
 
 	/**
@@ -326,6 +327,7 @@ implements GlobalConst{
 		
 		data[position] = (byte) (data[position] | bit);
 		count++;
+		setCount(count);
 		/*
 		if (bit == 1) 
 		{

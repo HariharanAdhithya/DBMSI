@@ -44,7 +44,7 @@ implements GlobalConst{
 	/**
 	 * number of slots in use
 	 */
-	private    short     count; 
+	private  static  short    count; 
 
 	/**
 	 * offset of first used byte by data records in data[]

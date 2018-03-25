@@ -8,6 +8,9 @@ package bitmap;
 
 import java.io.*;
 import java.lang.*;
+
+import btree.ConstructPageException;
+import btree.IteratorException;
 import global.*;
 import diskmgr.*;
 import bufmgr.*;
@@ -76,6 +79,8 @@ public class BM  implements GlobalConst{
 	      
 	      System.out.println(1+ "     "+header.get_rootId());
 	      
+	      System.out.println(header.get_ColNo());
+	      
 	      _printTree(header.get_rootId());
 	      
 	      System.out.println("--------------- End ---------------");
@@ -84,15 +89,19 @@ public class BM  implements GlobalConst{
 	    }
 
 	  private static void _printTree(PageId currentPageId) 
-		throws IOException, 
+		throws IOException 
 	  {
 
 			BMPage page = new BMPage(currentPageId);
 			PageId pageid = page.getCurPage();
-			page.openBMpage(page);
+			page.openBMpage(pageid);
 			byte [] data;
 		    data = page.getBMpageArray();
-		    System.out.println(data);
+		    int count = page.getCount();
+		    
+		    for(int i = 0; i < count; i++){
+		    	System.out.println(data[i]);
+		    }
 		    
 		    PageId apage = page.getNextPage();
 		    if(apage.pid != INVALID_PAGE) {

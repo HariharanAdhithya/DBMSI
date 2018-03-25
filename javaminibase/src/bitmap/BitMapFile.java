@@ -1,4 +1,4 @@
-package BitMap;
+package bitmap;
 
 
 import java.io.*;
@@ -53,11 +53,11 @@ public class BitMapFile implements GlobalConst {
 			throw new GetFileEntryException(e,"");
 		}
 	}
-	private void add_file_entry(String fileName, ColumnarFile columnfile) 
+	private void add_file_entry(String fileName, ColumnarFile columnfile, PageId start_page_num) 
 			throws AddFileEntryException
 	{
 		try {
-			SystemDefs.JavabaseDB.add_file_entry(fileName, columnfile)//filename and its PGID is added to DB.
+			SystemDefs.JavabaseDB.add_file_entry(fileName, columnfile, start_page_num);//filename and its PGID is added to DB.
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -146,7 +146,7 @@ public class BitMapFile implements GlobalConst {
 			throws GetFileEntryException, 
 			ConstructPageException,
 			IOException, 
-			AddFileEntryException {
+			AddFileEntryException, InvalidTupleSizeException, FieldNumberOutOfBoundException {
 
 		headerPageId=get_file_entry(filename, columnfile);
 
@@ -154,11 +154,11 @@ public class BitMapFile implements GlobalConst {
 		{
 			headerPage= new  BitMapHeaderPage(); 
 			headerPageId= headerPage.getPageId();
-			add_file_entry(filename,columnfile);
+			add_file_entry(filename,columnfile, headerPageId);
 			headerPage.set_magic0(MAGIC0);
 			headerPage.set_rootId(new PageId(INVALID_PAGE));
 			headerPage.set_ColNo(columno);
-			headerPage.setValue(value);
+			headerPage.set_value(value);
 			headerPage.setType(NodeType.BTHEAD);
 		}
 		else {
@@ -182,6 +182,9 @@ public class BitMapFile implements GlobalConst {
 	public void accessStr(ColumnarFile columnfile, int columno, String Value) throws InvalidTupleSizeException, IOException, FieldNumberOutOfBoundException {
 
 		Tuple t = new Tuple();
+		//short[] fieldOffset = {0,(short)columnfile.stringSize,(short)(2*columnfile.stringSize),(short)(2*columnfile.stringSize+4)};
+		//t.setTupleMetaData(columnfile.tupleLength, (short)columnfile.numberOfColumns, fieldOffset);
+		
 		int position = 0;
 
 		RID rid = new RID();
@@ -189,6 +192,9 @@ public class BitMapFile implements GlobalConst {
 
 
 		while ((t = columnScan.getNext(rid)) != null) {
+			short[] fieldOffset = {0,(short)columnfile.stringSize,(short)(2*columnfile.stringSize),(short)(2*columnfile.stringSize+4)};
+			t.setTupleMetaData(columnfile.tupleLength, (short)columnfile.numberOfColumns, fieldOffset);
+			
 			String colVal = t.getStrFld(1);
 			if(colVal.equals(Value)) {
 				insert(position);
@@ -210,6 +216,9 @@ public class BitMapFile implements GlobalConst {
 
 
 		while ((t = columnScan.getNext(rid)) != null) {
+			short[] fieldOffset = {0,(short)columnfile.stringSize,(short)(2*columnfile.stringSize),(short)(2*columnfile.stringSize+4)};
+			t.setTupleMetaData(columnfile.tupleLength, (short)columnfile.numberOfColumns, fieldOffset);
+			
 			int colVal = t.getIntFld(1);
 			if(colVal == Value) {
 				insert(position);
@@ -241,7 +250,8 @@ public class BitMapFile implements GlobalConst {
 
 		if (headerPage.get_rootId().pid == INVALID_PAGE) {
 			BMPage page = new BMPage();
-			page.getNextPage().pid = INVALID_PAGE ;
+			page.setNextPage(new PageId(INVALID_PAGE));
+			headerPage.set_rootId(page.getCurPage());
 			page.setBit(position,1);
 			return true;
 
@@ -250,14 +260,24 @@ public class BitMapFile implements GlobalConst {
 		if(headerPage.get_rootId().pid != INVALID_PAGE) {
 			PageId p = headerPage.get_rootId(); 
 			//apage = headerPage.set_rootId(pid);
+			/*Page pg1 = null;
+			try {
+				pg1 = pinPage(p);
+			} catch (PinPageException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}*/
 			BMPage page = new BMPage(p);
-			apage = page.getCurPage();
 			page.setNextPage(new PageId(INVALID_PAGE));
-			page.openBMpage(page);
+			page.openBMpage(p);
+			
 			byte [] data;
 			if(page.available_space() != 0) {
 				data = page.getBMpageArray();
 				int count = page.getCount();
+				
+				System.out.println(count);
+				
 				if(position > count+1)
 					return false;
 				else {
@@ -271,7 +291,7 @@ public class BitMapFile implements GlobalConst {
 				page.setNextPage(apage1);
 				page1.setCurPage(apage1);
 				page1.setPrevPage(apage);
-				page1.openBMpage(page1);
+				page1.openBMpage(apage1);
 				page1.setNextPage(new PageId(INVALID_PAGE));
 				byte [] data2;
 				if(page1.available_space() != 0) {
@@ -310,7 +330,7 @@ public class BitMapFile implements GlobalConst {
 			BMPage page = new BMPage();
 			apage = page.getCurPage();
 			page.setNextPage(new PageId(INVALID_PAGE));
-			page.openBMpage(page);
+			page.openBMpage(apage);
 			byte [] data;
 			data = page.getBMpageArray();
 			int count = page.getCount();
